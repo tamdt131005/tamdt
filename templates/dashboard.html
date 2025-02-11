@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-cube fa-2x" style="color: #4a90e2;"></i>
+                <h2>Dashboard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/login" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h1>Welcome Back, <span class="user-name-display">User</span>!</h1>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="user-name">User Name</span>
+                        <span class="user-role">Role: User</span>
+                    </div>
+                    <i class="fas fa-user-circle fa-2x"></i>
+                </div>
+            </div>
+
+            <!-- YouTube Input -->
+            <div class="youtube-input">
+                <input type="text" id="youtubeUrl" placeholder="Nhập link YouTube vào đây..." />
+                <button id="loadVideo">
+                    <i class="fas fa-play"></i>
+                    Xem Video
+                </button>
+            </div>
+
+            <!-- YouTube Embed -->
+            <div class="video-container">
+                <iframe
+                    id="youtubePlayer"
+                    width="100%"
+                    height="600"
+                    src="https://www.youtube.com/embed/TGwmFIphNcg"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+                <div id="videoError" class="video-error" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>Không thể tải video này. Vui lòng thử video khác.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script>
+        // Function to update user info from session data
+        function updateUserInfo() {
+            // Get user data from URL parameters if available
+            const urlParams = new URLSearchParams(window.location.search);
+            const userData = urlParams.get('data');
+            
+            if (userData) {
+                const user = JSON.parse(decodeURIComponent(userData));
+                document.querySelector('.user-name').textContent = user.TenDangNhap;
+                document.querySelector('.user-name-display').textContent = user.HoTen || user.TenDangNhap;
+                
+                // Update role text
+                let roleText = 'User';
+                if (user.Quyen === 0) roleText = 'Admin';
+                else if (user.Quyen === 1) roleText = 'Staff';
+                document.querySelector('.user-role').textContent = `Role: ${roleText}`;
+                
+                // Show welcome notification
+                if (typeof showNotification === 'function') {
+                    showNotification(`Welcome back, ${user.HoTen || user.TenDangNhap}!`);
+                }
+            }
+        }
+
+        // Update user info when page loads
+        document.addEventListener('DOMContentLoaded', updateUserInfo);
+    </script>
+</body>
+</html>
